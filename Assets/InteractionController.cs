@@ -5,13 +5,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 public class InteractionController : MonoBehaviour
 {
-
-    [SerializeField]
-    GameObject bulletPrefab;
-
-    
-
-    // Start is called before the first frame update
     void Start()
     {
         ActionBasedController controller = GetComponent<ActionBasedController>();
@@ -23,8 +16,17 @@ public class InteractionController : MonoBehaviour
 
 
     void OnTrigger(InputAction.CallbackContext ctx){
-        Debug.Log("bang");
-        Instantiate(bulletPrefab, transform.position,transform.rotation);
+        XRRayInteractor interactor = GetComponentInChildren<XRRayInteractor>();
+
+        foreach (IXRSelectInteractable interactable in interactor.interactablesSelected)
+        {
+           GameObject maybeAGun = interactable.transform.gameObject;
+
+           if (maybeAGun.TryGetComponent<GunController>(out GunController gun))
+           {
+                gun.PullTrigger();
+           }
+        }
     }
 
     // Update is called once per frame
@@ -32,4 +34,6 @@ public class InteractionController : MonoBehaviour
     {
         
     }
+
+    
 }
